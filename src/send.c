@@ -376,6 +376,11 @@ int send_run(sock_t st, shard_t *s)
 			    s->thread_id);
 			goto cleanup;
 		}
+
+		struct in_addr to_send;
+		to_send.s_addr = current_ip;
+		printf("%s\n", inet_ntoa(to_send));
+
 		for (int i = 0; i < zconf.packet_streams; i++) {
 			count++;
 			uint32_t src_ip = get_src_ip(current_ip, i);
