@@ -101,30 +101,30 @@ int send_batch(sock_t sock, batch_t *batch, int retries)
 	struct mmsghdr *current_msg_vec = msgvec;
 	int total_packets_sent = 0;
 	int num_of_packets_in_batch = batch->len;
-	for (int i = 0; i < retries; i++) {
-		// according to manpages
-		// On success, sendmmsg() returns the number of messages sent from msgvec; if this is less than vlen, the
-		//       caller can retry with a further sendmmsg() call to send the remaining messages.
-		// On error, -1 is returned, and errno is set to indicate the error.
-		int rv = sendmmsg(sock.sock, current_msg_vec, num_of_packets_in_batch, 0);
-		if (rv < 0) {
-			// retry if sending all packets failed
-			log_error("batch send", "error in sendmmsg: %s", strerror(errno));
-			continue;
-		}
-		// if rv is positive, it gives the number of packets successfully sent
-		total_packets_sent += rv;
-		if (rv == num_of_packets_in_batch) {
-			// all packets in batch were sent successfully
-			break;
-		}
-		// batch send was only partially successful, we'll retry if we have retries available
-		log_warn("batch send", "only successfully sent %d packets out of a batch of %d packets", total_packets_sent, batch->len);
-		// per the manpages for sendmmsg, packets are sent sequentially and the call returns upon a
-		// failure, returning the number of packets successfully sent
-		// remove successfully sent packets from batch for retry
-		current_msg_vec = &msgvec[total_packets_sent];
-		num_of_packets_in_batch = batch->len - total_packets_sent;
-	}
-	return total_packets_sent;
+	// for (int i = 0; i < retries; i++) {
+	// 	// according to manpages
+	// 	// On success, sendmmsg() returns the number of messages sent from msgvec; if this is less than vlen, the
+	// 	//       caller can retry with a further sendmmsg() call to send the remaining messages.
+	// 	// On error, -1 is returned, and errno is set to indicate the error.
+	// 	int rv = sendmmsg(sock.sock, current_msg_vec, num_of_packets_in_batch, 0);
+	// 	if (rv < 0) {
+	// 		// retry if sending all packets failed
+	// 		log_error("batch send", "error in sendmmsg: %s", strerror(errno));
+	// 		continue;
+	// 	}
+	// 	// if rv is positive, it gives the number of packets successfully sent
+	// 	total_packets_sent += rv;
+	// 	if (rv == num_of_packets_in_batch) {
+	// 		// all packets in batch were sent successfully
+	// 		break;
+	// 	}
+	// 	// batch send was only partially successful, we'll retry if we have retries available
+	// 	log_warn("batch send", "only successfully sent %d packets out of a batch of %d packets", total_packets_sent, batch->len);
+	// 	// per the manpages for sendmmsg, packets are sent sequentially and the call returns upon a
+	// 	// failure, returning the number of packets successfully sent
+	// 	// remove successfully sent packets from batch for retry
+	// 	current_msg_vec = &msgvec[total_packets_sent];
+	// 	num_of_packets_in_batch = batch->len - total_packets_sent;
+	// }
+	// return total_packets_sent;
 }

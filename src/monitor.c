@@ -237,9 +237,9 @@ static void export_stats(int_status_t *intrnl, export_status_t *exp,
 		exp->hitrate = 0;
 		exp->app_hitrate = 0;
 	} else if (zconf.dedup_method == DEDUP_METHOD_NONE) {
-			// receive thread won't de-dupe packets, so don't need to care about number of probes
-			exp->hitrate = recv_success * 100.0 /  total_sent;
-			exp->app_hitrate = app_success * 100.0 / total_sent;
+		// receive thread won't de-dupe packets, so don't need to care about number of probes
+		exp->hitrate = recv_success * 100.0 / total_sent;
+		exp->app_hitrate = app_success * 100.0 / total_sent;
 	} else {
 		// receive thread will de-dupe packets for a given target, so we'll divide by the number of probes to get accurate hit-rate
 		exp->hitrate = recv_success * 100.0 / (total_sent / zconf.packet_streams);
@@ -330,69 +330,69 @@ static void log_drop_warnings(export_status_t *exp)
 
 static void onscreen_appsuccess(export_status_t *exp)
 {
-	// this when probe module handles application-level success rates
-	if (!exp->complete) {
-		fprintf(stderr,
-			"%5s %0.0f%%%s; sent: %" PRIu64 " %sp/s (%sp/s avg); "
-			"recv: %u %sp/s (%sp/s avg); "
-			"app success: %u %sp/s (%sp/s avg); "
-			"drops: %sp/s (%sp/s avg); "
-			"hitrate: %0.2f%% "
-			"app hitrate: %0.2f%%\n",
-			exp->time_past_str, exp->percent_complete,
-			exp->time_remaining_str, exp->total_sent,
-			exp->send_rate_str, exp->send_rate_avg_str,
-			exp->recv_success_unique, exp->recv_rate_str,
-			exp->recv_avg_str, exp->app_recv_success_unique,
-			exp->app_success_rate_str, exp->app_success_avg_str,
-			exp->pcap_drop_last_str, exp->pcap_drop_avg_str,
-			exp->hitrate, exp->app_hitrate);
-	} else {
-		fprintf(stderr,
-			"%5s %0.0f%%%s; sent: %" PRIu64 " done (%sp/s avg); "
-			"recv: %u %sp/s (%sp/s avg); "
-			"app success: %u %sp/s (%sp/s avg); "
-			"drops: %sp/s (%sp/s avg); "
-			"hitrate: %0.2f%% "
-			"app hitrate: %0.2f%%\n",
-			exp->time_past_str, exp->percent_complete,
-			exp->time_remaining_str, exp->total_sent,
-			exp->send_rate_avg_str, exp->recv_success_unique,
-			exp->recv_rate_str, exp->recv_avg_str,
-			exp->app_recv_success_unique, exp->app_success_rate_str,
-			exp->app_success_avg_str, exp->pcap_drop_last_str,
-			exp->pcap_drop_avg_str, exp->hitrate, exp->app_hitrate);
-	}
+	// // this when probe module handles application-level success rates
+	// if (!exp->complete) {
+	// 	fprintf(stderr,
+	// 		"%5s %0.0f%%%s; sent: %" PRIu64 " %sp/s (%sp/s avg); "
+	// 		"recv: %u %sp/s (%sp/s avg); "
+	// 		"app success: %u %sp/s (%sp/s avg); "
+	// 		"drops: %sp/s (%sp/s avg); "
+	// 		"hitrate: %0.2f%% "
+	// 		"app hitrate: %0.2f%%\n",
+	// 		exp->time_past_str, exp->percent_complete,
+	// 		exp->time_remaining_str, exp->total_sent,
+	// 		exp->send_rate_str, exp->send_rate_avg_str,
+	// 		exp->recv_success_unique, exp->recv_rate_str,
+	// 		exp->recv_avg_str, exp->app_recv_success_unique,
+	// 		exp->app_success_rate_str, exp->app_success_avg_str,
+	// 		exp->pcap_drop_last_str, exp->pcap_drop_avg_str,
+	// 		exp->hitrate, exp->app_hitrate);
+	// } else {
+	// 	fprintf(stderr,
+	// 		"%5s %0.0f%%%s; sent: %" PRIu64 " done (%sp/s avg); "
+	// 		"recv: %u %sp/s (%sp/s avg); "
+	// 		"app success: %u %sp/s (%sp/s avg); "
+	// 		"drops: %sp/s (%sp/s avg); "
+	// 		"hitrate: %0.2f%% "
+	// 		"app hitrate: %0.2f%%\n",
+	// 		exp->time_past_str, exp->percent_complete,
+	// 		exp->time_remaining_str, exp->total_sent,
+	// 		exp->send_rate_avg_str, exp->recv_success_unique,
+	// 		exp->recv_rate_str, exp->recv_avg_str,
+	// 		exp->app_recv_success_unique, exp->app_success_rate_str,
+	// 		exp->app_success_avg_str, exp->pcap_drop_last_str,
+	// 		exp->pcap_drop_avg_str, exp->hitrate, exp->app_hitrate);
+	// }
 }
 
 static void onscreen_generic(export_status_t *exp)
 {
-	if (!exp->complete) {
-		fprintf(stderr,
-			"%5s %0.0f%%%s; send: %" PRIu64 " %sp/s (%sp/s avg); "
-			"recv: %u %sp/s (%sp/s avg); "
-			"drops: %sp/s (%sp/s avg); "
-			"hitrate: %0.2f%%\n",
-			exp->time_past_str, exp->percent_complete,
-			exp->time_remaining_str, exp->total_sent,
-			exp->send_rate_str, exp->send_rate_avg_str,
-			exp->recv_success_unique, exp->recv_rate_str,
-			exp->recv_avg_str, exp->pcap_drop_last_str,
-			exp->pcap_drop_avg_str, exp->hitrate);
-	} else {
-		fprintf(stderr,
-			"%5s %0.0f%%%s; send: %" PRIu64 " done (%sp/s avg); "
-			"recv: %u %sp/s (%sp/s avg); "
-			"drops: %sp/s (%sp/s avg); "
-			"hitrate: %0.2f%%\n",
-			exp->time_past_str, exp->percent_complete,
-			exp->time_remaining_str, exp->total_sent,
-			exp->send_rate_avg_str, exp->recv_success_unique,
-			exp->recv_rate_str, exp->recv_avg_str,
-			exp->pcap_drop_last_str, exp->pcap_drop_avg_str,
-			exp->hitrate);
-	}
-	fflush(stderr);
+	// if (!exp->complete) {
+	// 	fprintf(stderr,
+	// 		"%5s %0.0f%%%s; send: %" PRIu64 " %sp/s (%sp/s avg); "
+	// 		"recv: %u %sp/s (%sp/s avg); "
+	// 		"drops: %sp/s (%sp/s avg); "
+	// 		"hitrate: %0.2f%%\n",
+	// 		exp->time_past_str, exp->percent_complete,
+	// 		exp->time_remaining_str, exp->total_sent,
+	// 		exp->send_rate_str, exp->send_rate_avg_str,
+	// 		exp->recv_success_unique, exp->recv_rate_str,
+	// 		exp->recv_avg_str, exp->pcap_drop_last_str,
+	// 		exp->pcap_drop_avg_str, exp->hitrate);
+	// } else {
+	// 	fprintf(stderr,
+	// 		"%5s %0.0f%%%s; send: %" PRIu64 " done (%sp/s avg); "
+	// 		"recv: %u %sp/s (%sp/s avg); "
+	// 		"drops: %sp/s (%sp/s avg); "
+	// 		"hitrate: %0.2f%%\n",
+	// 		exp->time_past_str, exp->percent_complete,
+	// 		exp->time_remaining_str, exp->total_sent,
+	// 		exp->send_rate_avg_str, exp->recv_success_unique,
+	// 		exp->recv_rate_str, exp->recv_avg_str,
+	// 		exp->pcap_drop_last_str, exp->pcap_drop_avg_str,
+	// 		exp->hitrate);
+	// }
+	// fflush(stderr);
 }
 
 static FILE *init_status_update_file(char *path)
